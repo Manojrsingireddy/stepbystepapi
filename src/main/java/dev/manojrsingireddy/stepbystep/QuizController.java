@@ -36,7 +36,6 @@ public class QuizController {
 
     @PostMapping()
     public ResponseEntity<Quiz> createQuiz(@RequestBody Map<String, Object> payload){
-        System.out.println("HERE");
         String username = (String) payload.get("username");
         List<Map<String, Object>> questionsData = (List<Map<String, Object>>) payload.get("questionList");
         if (username == null || questionsData == null) {
@@ -56,7 +55,6 @@ public class QuizController {
         }
         Optional<User> user = userService.getSingleUser(username);
         if (!user.isPresent()) {
-            System.out.println(username + " NOT FOUND");
             return new ResponseEntity<>(new Quiz(), HttpStatus.NOT_FOUND);
         }
         Quiz quiz = quizService.createQuiz(questions);

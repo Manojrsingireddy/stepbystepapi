@@ -52,6 +52,14 @@ public class UserService {
         return null;
     }
 
+    public void setQuiz(ObjectId userId, ObjectId quizId){
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()){
+            user.get().setQuizId(quizId);
+            userRepository.save(user.get());
+        }
+    }
+
     public User register(String username, String password, String email){
         return userRepository.save(new User(username, password, email));
     }

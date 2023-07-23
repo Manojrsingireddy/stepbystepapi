@@ -16,25 +16,21 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.NoArgsConstructor;
+import java.util.List;
 
-@Document(collection = "users")
+@Document(collection = "quizzes")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+
+public class Quiz {
     @Id
     private ObjectId id;
-    private String username;
-    private String password;
-    private String email;
-    private ObjectId quizId;
-    User(String username, String password, String email){
-        this.username = username;
-        this.password = password;
-        this.email = email;
+    private List<Question> questions;
+    Quiz(List<Question> questions){
+        this.questions = questions;
     }
-    User(String username, String password){
-        this.username = username;
-        this.password = password;
+    public String toString(){
+        return questions.toString();
     }
 }

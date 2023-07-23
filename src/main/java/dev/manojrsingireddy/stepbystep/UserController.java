@@ -27,29 +27,32 @@ public class UserController {
     private UserService userService;
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody Map<String, String> payload){
-        return new ResponseEntity<User>(userService.login(payload.get("username"), payload.get("password")), HttpStatus.OK);
+        // System.out.println("LOGIN RECIEVED" + payload.get("username")+payload.get("password"));
+        User res = userService.login(payload.get("username"), payload.get("password"));
+        return res == null ? new ResponseEntity<User>(new User(payload.get("username"), payload.get("password")), HttpStatus.BAD_REQUEST) : new ResponseEntity<User>(res, HttpStatus.OK);
     }
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody Map<String, String> payload){
+        System.out.println("Regiser RECIEVED" + payload.get("username")+payload.get("password"));
         if(userService.existsByUsername(payload.get("username")))
             return new ResponseEntity<User>(new User(), HttpStatus.CONFLICT);
         else
             return new ResponseEntity<User>(userService.register(payload.get("username"), payload.get("password"), payload.get("email")), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUser(@PathVariable String id){
-        return new ResponseEntity<Optional<User>>(userService.getSingleUser(id), HttpStatus.OK);
-    }
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Optional<User>> getUser(@PathVariable String id){
+    //     return new ResponseEntity<Optional<User>>(userService.getSingleUser(id), HttpStatus.OK);
+    // }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody Map<String, String> payload){
-        User updatedUser = new User(payload.get("username"), payload.get("password"), payload.get("email"));
-        return new ResponseEntity<User>(userService.updateUser(new ObjectId(id), updatedUser), HttpStatus.OK);
-    }
+    // @PutMapping("/{id}")
+    // public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody Map<String, String> payload){
+    //     User updatedUser = new User(payload.get("username"), payload.get("password"), payload.get("email"));
+    //     return new ResponseEntity<User>(userService.updateUser(new ObjectId(id), updatedUser), HttpStatus.OK);
+    // }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable String id){
-        return new ResponseEntity<User>(userService.deleteUser(id), HttpStatus.OK);
-    }
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<User> deleteUser(@PathVariable String id){
+    //     return new ResponseEntity<User>(userService.deleteUser(id), HttpStatus.OK);
+    // }
 }

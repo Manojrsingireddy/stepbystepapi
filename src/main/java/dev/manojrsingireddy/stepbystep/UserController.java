@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.Map;
 
+/*
+ * Run and then visit http://localhost:8080/swagger-ui/index.html#/ to view documentation * 
+*/
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
@@ -26,18 +30,17 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody Map<String, String> payload){
-        // System.out.println("LOGIN RECIEVED" + payload.get("username")+payload.get("password"));
-        User res = userService.login(payload.get("username"), payload.get("password"));
-        return res == null ? new ResponseEntity<User>(new User(payload.get("username"), payload.get("password")), HttpStatus.BAD_REQUEST) : new ResponseEntity<User>(res, HttpStatus.OK);
+    public ResponseEntity<User> login(@RequestBody User user){
+        User res = userService.login(user.getUsername(), user.getPassword());
+        return res == null ? new ResponseEntity<>(HttpStatus.BAD_REQUEST) : new ResponseEntity<>(res, HttpStatus.OK);
     }
+
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody Map<String, String> payload){
-        System.out.println("Regiser RECIEVED" + payload.get("username")+payload.get("password"));
-        if(userService.existsByUsername(payload.get("username")))
-            return new ResponseEntity<User>(new User(), HttpStatus.CONFLICT);
+    public ResponseEntity<User> register(@RequestBody User user){
+        if(userService.existsByUsername(user.getUsername()))
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         else
-            return new ResponseEntity<User>(userService.register(payload.get("username"), payload.get("password"), payload.get("email")), HttpStatus.CREATED);
+            return new ResponseEntity<User>(userService.register(user.getUsername(), user.getPassword(), user.getEmail()), HttpStatus.CREATED);
     }
 
     // @GetMapping("/{id}")

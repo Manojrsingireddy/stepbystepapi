@@ -1,4 +1,4 @@
-package dev.manojrsingireddy.stepbystep;
+package dev.manojrsingireddy.user;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;

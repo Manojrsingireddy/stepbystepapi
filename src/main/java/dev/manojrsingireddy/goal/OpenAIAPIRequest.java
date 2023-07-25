@@ -1,4 +1,4 @@
-package dev.manojrsingireddy.stepbystep;
+package dev.manojrsingireddy.goal;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package dev.manojrsingireddy.stepbystep;
+package dev.manojrsingireddy.quiz;
 
 import java.time.LocalDateTime;
 

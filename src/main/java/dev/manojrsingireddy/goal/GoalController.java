@@ -1,4 +1,4 @@
-package dev.manojrsingireddy.stepbystep;
+package dev.manojrsingireddy.goal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +31,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import dev.manojrsingireddy.quiz.Quiz;
+import dev.manojrsingireddy.quiz.QuizService;
+import dev.manojrsingireddy.user.User;
+import dev.manojrsingireddy.user.UserService;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 

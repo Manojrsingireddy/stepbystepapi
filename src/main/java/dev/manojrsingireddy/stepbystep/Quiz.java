@@ -17,6 +17,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.NoArgsConstructor;
 import java.util.List;
+import java.lang.StringBuilder;
 
 @Document(collection = "quizzes")
 @Data
@@ -31,6 +32,10 @@ public class Quiz {
         this.questions = questions;
     }
     public String toString(){
-        return questions.toString();
+        StringBuilder sb = new StringBuilder();
+        for(Question q : questions){
+            sb.append(q.toString() + "; ");
+        }
+        return sb.toString();
     }
 }

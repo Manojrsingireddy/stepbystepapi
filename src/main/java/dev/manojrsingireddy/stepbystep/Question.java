@@ -25,6 +25,6 @@ public class Question {
         this.answer = answer;
     }
     public String toString(){
-        return "[ " + question + " : " + answer +" ]";
+        return question + ": " + answer;
     }
 }

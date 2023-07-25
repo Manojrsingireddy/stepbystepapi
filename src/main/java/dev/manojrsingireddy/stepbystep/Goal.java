@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 import lombok.NoArgsConstructor;
 import java.util.List;
 
-@Document(collection = "quizzes")
+@Document(collection = "goals")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

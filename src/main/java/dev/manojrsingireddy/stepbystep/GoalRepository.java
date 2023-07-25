@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface GoalRepository extends MongoRepository<Goal, ObjectId>{
     Optional<List<Goal>> findByUsername(String username);
+    Optional<Goal> findById(ObjectId id);
 }

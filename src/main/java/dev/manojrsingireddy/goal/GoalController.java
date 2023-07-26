@@ -85,12 +85,16 @@ public class GoalController {
         return new ResponseEntity<Goal>(goals.get(random_index), HttpStatus.OK);
     }
     // Update Goal
-    @PutMapping()
-    public ResponseEntity<Goal> updateGoal(@RequestBody Goal payload_goal){
-        Goal goal = goalService.getGoal(payload_goal.getId().toString());
+    @PutMapping("/{goalId}")
+    public ResponseEntity<Goal> updateGoal(@PathVariable String goalId, @RequestBody Map<String, String> payload){
+        Goal goal = goalService.getGoal(goalId);
         if(goal == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        goalService.addGoal(payload_goal);
-        return new ResponseEntity<>(payload_goal, HttpStatus.OK);
+        if(payload.containsKey("username")) goal.setUsername(payload.get("username"));
+        if(payload.containsKey("goalText")) goal.setGoalText(payload.get("goalText"));
+        if(payload.containsKey("completed")) goal.setCompleted(Boolean.parseBoolean(payload.get("completed")));
+        if(payload.containsKey("rejected")) goal.setRejected(Boolean.parseBoolean(payload.get("rejected")));
+        goalService.addGoal(goal);
+        return new ResponseEntity<>(goal, HttpStatus.OK);
     }
 
     // Create New Goals

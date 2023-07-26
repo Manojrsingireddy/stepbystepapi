@@ -16,17 +16,13 @@ public class GoalService {
     }
 
     public List<Goal> getValidGoals(String username){
-        Optional <List<Goal>> goalList = goalRepository.findByUsername(username);
-        if(!goalList.isPresent()){
-
-        }
+        Optional <List<Goal>> goalList = goalRepository.findByUsernameAndRejectedIsFalseAndCompletedIsFalse(username);
         return goalList.isPresent() ? goalList.get() : null;
     }
 
-    public Goal getGoal(String goalId){
-        ObjectId id = new ObjectId(goalId);
-        Optional <Goal> goal = goalRepository.findById(id);
-        return goal.isPresent() ? goal.get() : null;
+    public Goal getGoal(String id) {
+        Optional<Goal> goalOptional = goalRepository.findById(id);
+        return goalOptional.orElse(null);
     }
 
 

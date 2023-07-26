@@ -58,7 +58,7 @@ public class GoalController {
     @Autowired 
     GoalService goalService;
     
-    private final String open_ai_url = "https://api.openai.com/v1/chat/completions"; // Updated endpoint
+    private final String open_ai_url = "https://api.openai.com/v1/chat/completions";
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -78,19 +78,26 @@ public class GoalController {
 
     // Get Todays Goal by User
     @GetMapping("/today")
-    public ResponseEntity<List<Goal>> getTodaysGoal(@RequestBody Map<String, String> payload){
-        List<Goal> goals = goalService.getGoalsByUser(payload.get("username"));
-
-
-        return goals != null ? new ResponseEntity<List<Goal>>(goals, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Goal> getTodaysGoal(@RequestBody Map<String, String> payload){
+        List<Goal> goals = goalService.getValidGoals(payload.get("username"));
+        if(goals == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        int random_index = (int) (Math.random() * goals.size());
+        return new ResponseEntity<Goal>(goals.get(random_index), HttpStatus.OK);
     }
-
+    // Update Goal
+    @PutMapping()
+    public ResponseEntity<Goal> updateGoal(@RequestBody Goal payload_goal){
+        Goal goal = goalService.getGoal(payload_goal.getId().toString());
+        if(goal == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        goalService.addGoal(payload_goal);
+        return new ResponseEntity<>(payload_goal, HttpStatus.OK);
+    }
 
     // Create New Goals
     @PostMapping("/create")
     public ResponseEntity<List<Goal>> createNewGoals(@RequestBody Map<String, String> payload){
         String username = payload.get("username");
-        List<Goal> goalList = getGoals(username, 20);
+        List<Goal> goalList = createGoalsByOpenAI(username, 5);
         if(goalList == null){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -99,7 +106,7 @@ public class GoalController {
         }
     }
 
-    private List<Goal> getGoals(String username, int number_of_goals) {
+    private List<Goal> createGoalsByOpenAI(String username, int number_of_goals) {
         // Get the user with the given username
         Optional<User> user = userService.getSingleUser(username);
 
@@ -130,7 +137,7 @@ public class GoalController {
 
         // Set messages and other parameters for the request
         requestPayload.setMessages(List.of(systemMessage1, systemMessage2, userMessage));
-        requestPayload.setMax_tokens(512);
+        requestPayload.setMax_tokens(1024);
         requestPayload.setTop_p(1);
         requestPayload.setTemperature(0);
         requestPayload.setFrequency_penalty(0);
@@ -201,25 +208,13 @@ public class GoalController {
         // Return the list of generated goals
         return goals;
 }
-    // Update Goal
-    @PutMapping()
-    public ResponseEntity<Goal> updateGoal(@RequestBody Map<String, String> payload){
-        String goalId = payload.get("goalId");
-        String goalText = payload.get("goalText");
-        String completed = payload.get("completed");
-        String rejected = payload.get("rejected");
-        Goal goal = goalService.getGoal(goalId);
-        if(goal == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        else{
-            goal.setGoalText(goalText);
-            goal.setCompleted(Boolean.parseBoolean(completed));
-            goal.setRejected(Boolean.parseBoolean(rejected));
-            goalService.addGoal(goal);
-            return new ResponseEntity<>(goal, HttpStatus.OK);
-        }
-    }
+    
+
+    
+
+
+
+
 
 
 }

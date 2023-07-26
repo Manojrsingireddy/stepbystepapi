@@ -4,8 +4,11 @@ package dev.manojrsingireddy.goal;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 // import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-
+import dev.manojrsingireddy.support.ObjectIdDeserializer;
+import dev.manojrsingireddy.support.ObjectIdSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -19,7 +22,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Goal {
-    @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    @JsonDeserialize(using = ObjectIdDeserializer.class)
     private ObjectId id;
     private String username;
     private String goalText;

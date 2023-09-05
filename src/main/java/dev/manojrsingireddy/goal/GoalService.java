@@ -25,8 +25,6 @@ public class GoalService {
         return goalOptional.orElse(null);
     }
 
-
-
     public void addGoal(Goal g){
         goalRepository.save(g);
     }

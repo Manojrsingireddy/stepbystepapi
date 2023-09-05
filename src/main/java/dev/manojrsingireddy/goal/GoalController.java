@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ import org.springframework.beans.factory.annotation.Value;
 */
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://stepbystep-webapp.vercel.app"})
 @RequestMapping("/api/v1/goals")
 public class GoalController {
 
@@ -70,16 +69,16 @@ public class GoalController {
      String openaiApiKey;
     
     // Get All Goals by User
-    @GetMapping()
-    public ResponseEntity<List<Goal>> getGoalsByUsername(@RequestBody Map<String, String> payload){
-        List<Goal> goals = goalService.getGoalsByUser(payload.get("username"));
+    @GetMapping("/{username}")
+    public ResponseEntity<List<Goal>> getGoalsByUsername(@PathVariable String username){
+        List<Goal> goals = goalService.getGoalsByUser(username);
         return goals != null ? new ResponseEntity<List<Goal>>(goals, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     // Get Todays Goal by User
-    @GetMapping("/today")
-    public ResponseEntity<Goal> getTodaysGoal(@RequestBody Map<String, String> payload){
-        List<Goal> goals = goalService.getValidGoals(payload.get("username"));
+    @GetMapping("/today/{username}")
+    public ResponseEntity<Goal> getTodaysGoal(@PathVariable String username){
+        List<Goal> goals = goalService.getValidGoals(username);
         if(goals == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         int random_index = (int) (Math.random() * goals.size());
         return new ResponseEntity<Goal>(goals.get(random_index), HttpStatus.OK);
@@ -102,7 +101,7 @@ public class GoalController {
     public ResponseEntity<List<Goal>> createNewGoals(@RequestBody Map<String, String> payload){
         String username = payload.get("username");
         List<Goal> goalList = createGoalsByOpenAI(username, 5);
-        if(goalList == null){
+        if(goalList == null || goalList.size() == 0){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         else{
@@ -186,6 +185,7 @@ public class GoalController {
                 Map<String, Object> choice = choices.get(0);
                 Map<String, Object> message = (Map<String, Object>) choice.get("message");
                 String content = (String) message.get("content");
+                // System.out.println("Content: " + content);
 
                 // Deserialize the generated goals from JSON to a list of maps
                 ObjectMapper mapper = new ObjectMapper();

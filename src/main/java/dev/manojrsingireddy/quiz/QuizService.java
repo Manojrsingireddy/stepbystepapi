@@ -21,4 +21,7 @@ public class QuizService {
         }
         return null;
     }
+    public void updateQuiz(Quiz quiz){
+        quizRepository.save(quiz);
+    }
 }

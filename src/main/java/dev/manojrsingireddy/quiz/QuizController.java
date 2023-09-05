@@ -8,7 +8,6 @@ import dev.manojrsingireddy.user.UserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +29,7 @@ import java.util.Map;
 */
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://stepbystep-webapp.vercel.app"})
 @RequestMapping("/api/v1/quizzes")
 public class QuizController {
     @Autowired
@@ -66,9 +65,8 @@ public class QuizController {
         return new ResponseEntity<>(quiz, HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<Quiz> getQuiz(@RequestBody Map<String, String> payload){
-        String username = payload.get("username");
+    @GetMapping("/{username}")
+    public ResponseEntity<Quiz> getQuiz(@PathVariable String username){
         if (username == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -85,5 +83,33 @@ public class QuizController {
         }
         return new ResponseEntity<>(quiz, HttpStatus.OK);
     }
+    @PutMapping("/{username}")
+public ResponseEntity<Quiz> updateQuiz(@PathVariable String username, @RequestBody Quiz payload) {
+    if (username == null || payload == null) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    Optional<User> user = userService.getSingleUser(username);
+    if (!user.isPresent()) {
+        return new ResponseEntity<>(new Quiz(), HttpStatus.NOT_FOUND);
+    }
+
+    if (user.get().getQuizId() == null) {
+        return new ResponseEntity<>(new Quiz(), HttpStatus.NOT_FOUND);
+    }
+
+    Quiz existingQuiz = quizService.getQuiz(user.get().getQuizId());
+    if (existingQuiz == null) {
+        return new ResponseEntity<>(new Quiz(), HttpStatus.NOT_FOUND);
+    }
+
+    // Update the existing quiz with the data from the payload
+    existingQuiz.setQuestions(payload.getQuestions());
+
+    // Save the updated quiz
+    quizService.updateQuiz(existingQuiz);
+
+    return new ResponseEntity<>(existingQuiz, HttpStatus.OK);
+}
 
 }

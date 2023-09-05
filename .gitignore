@@ -34,3 +34,8 @@ build/
 
 ### ENV ###
 .env
+
+### Pacakge and SAM Files ###
+template.yaml
+samconfig.toml
+.aws-sam/
